@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="monedas.png" type="image/png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .nav-item {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .nav-item:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-item.active {
+            border: 2px solid rgba(0, 0, 0, 0.125);
+            border-radius: 5px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .form-control {
+            border-radius: 5px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-danger:hover, .btn-danger:focus {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+        .alert {
+            transition: opacity 0.5s ease;
+        }
+
+        #categoryFormCard {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-primary text-white text-center py-3">
+        <h1 id="welcomeMessage">Welcome to Your Personal Finance Dashboard</h1>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href="/inicio.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/perfil.html">Perfil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Ajustes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="logoutLink">Cerrar sesión</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mt-4">
+        <section id="balance" class="mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Balance actual</h2>
+                    <p id="balanceAmount" class="card-text">$0.00</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="transactions" class="mb-4">
+            <h2 class="text-center mb-3">Transacciones recientes</h2>
+            <div class="row" id="transactionCards">
+                <!-- Transaction cards will be dynamically added here -->
+            </div>
+        </section>
+
+        <section id="addTransaction">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Agregar una nueva transacción</h2>
+                    <form id="transactionForm">
+                        <div class="form-group">
+                            <label for="description">Descripción:</label>
+                            <input type="text" class="form-control" id="description" name="description" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Monto:</label>
+                            <input type="number" class="form-control" id="amount" name="amount" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="type">Tipo:</label>
+                            <select class="form-control" id="type" name="type">
+                                <option value="Ingreso">Ingreso</option>
+                                <option value="Gasto">Gasto</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Agregar transacción</button>
+                    </form>
+                    <button id="createCategoryButton" class="btn btn-secondary mt-3">Crear Categoría</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formulario de creación de categorías -->
+        <div class="card mb-4" id="categoryFormCard">
+            <div class="card-body">
+                <h2 class="card-title">Crear una nueva categoría</h2>
+                <form id="categoryForm">
+                    <div class="form-group">
+                        <label for="categoryName">Nombre de la Categoría:</label>
+                        <input type="text" class="form-control" id="categoryName" name="categoryName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryType">Tipo:</label>
+                        <select class="form-control" id="categoryType" name="categoryType">
+                            <option value="Ingreso">Ingreso</option>
+                            <option value="Gasto">Gasto</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear Categoría</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-light text-center py-3 mt-4">
+        <p>&copy; 2024 Personal Finance App</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- Custom Script -->
+    <script src="inicio.js"></script>
+</body>
+</html>

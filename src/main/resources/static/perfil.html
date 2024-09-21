@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="monedas.png" type="image/png">
+    <style>
+        /* Estilo adicional para efectos de botones */
+        .nav-item {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .nav-item:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-item.active {
+            border: 2px solid rgba(0, 0, 0, 0.125); /* Borde más claro para el botón activo */
+            border-radius: 5px; /* Bordes redondeados */
+        }
+
+        /* Estilo para el icono del botón de mostrar/ocultar contraseña */
+        .toggle-password {
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px; /* Tamaño del icono */
+            height: 24px; /* Tamaño del icono */
+        }
+
+        /* Estilo para el contenedor de posición relativa */
+        .form-group.position-relative {
+            position: relative;
+        }
+
+        /* Estilo para centrar verticalmente el icono en el cuadro de contraseña */
+        .password-toggle-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .password-toggle-container img {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px; /* Tamaño del icono */
+            height: 20px; /* Tamaño del icono */
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-primary text-white text-center py-3">
+        <h1 id="welcomeMessage">Perfil de Usuario</h1>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href="/inicio.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Ajustes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="logoutLink">Cerrar sesión</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mt-4">
+        <section id="profileOptions" class="mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Opciones de Perfil</h2>
+                    <div id="changeUsername">
+                        <h4>Cambiar nombre de usuario</h4>
+                        <form id="changeUsernameForm">
+                            <div class="form-group">
+                                <label for="newUsername">Nuevo nombre de usuario:</label>
+                                <input type="text" class="form-control" id="newUsername" name="newUsername" required>
+                                <small id="usernameError" class="text-danger"></small>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar cambio</button>
+                        </form>
+                    </div>
+                    <hr>
+                    <div id="changePassword">
+                        <h4>Cambiar contraseña</h4>
+                        <form id="changePasswordForm">
+                            <div class="form-group position-relative">
+                                <label for="currentPassword">Contraseña actual:</label>
+                                <div class="password-toggle-container">
+                                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                    <img src="ojo_off.png" class="toggle-password" data-toggle="#currentPassword" alt="Mostrar contraseña">
+                                </div>
+                            </div>
+                            <div class="form-group position-relative">
+                                <label for="newPassword">Nueva contraseña:</label>
+                                <div class="password-toggle-container">
+                                    <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                    <img src="ojo_off.png" class="toggle-password" data-toggle="#newPassword" alt="Mostrar contraseña">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar cambio</button>
+                        </form>
+                    </div>
+                    <hr>
+                    <div id="closeAccount">
+                        <h4>Cerrar cuenta</h4>
+                        <p>¿Estás seguro que deseas cerrar tu cuenta?</p>
+                        <button id="confirmCloseAccount" class="btn btn-danger" data-toggle="modal" data-target="#confirmCloseModal">Cerrar cuenta</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-light text-center py-3 mt-4">
+        <p>&copy; 2024 Personal Finance App</p>
+    </footer>
+
+    <!-- Modal de Confirmación de Cierre de Cuenta -->
+    <div class="modal fade" id="confirmCloseModal" tabindex="-1" role="dialog" aria-labelledby="confirmCloseModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmCloseModalLabel">Confirmación de Cierre de Cuenta</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro que deseas cerrar tu cuenta?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button id="confirmCloseAccountBtn" type="button" class="btn btn-danger">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts al final del body para mejorar el rendimiento de carga -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- Tu script personalizado -->
+    <script src="perfil.js"></script>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicación de Finanzas Personales</title>
+    <!-- Incluir Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Enlace a tu favicon -->
+    <link rel="shortcut icon" href="monedas.png" type="image/png">
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9faad;
+            color: #333;
+        }
+
+        .btn-animation {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .btn-animation:hover {
+            transform: scale(1.1);
+        }
+
+        /* Estilos para el encabezado */
+        header {
+            background-color: #28a745;
+            padding: 2rem 0;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        /* Estilos para la sección de introducción */
+        #intro {
+            padding: 4rem 0;
+            background-color: rgba(255, 255, 255, 0.777); /* Fondo semitransparente */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        #intro h2 {
+            font-size: 2rem;
+            color: #28a745;
+            margin-bottom: 1rem;
+        }
+
+        #intro p {
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Estilos para la sección de acciones */
+        #actions {
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .btn-success:hover, .btn-success:focus {
+            background-color: #218838;
+            border-color: #218838;
+        }
+
+        /* Estilos para el footer */
+        footer {
+            background-color: #343a40;
+            padding: 1rem 0;
+            text-align: center;
+            color: #fff;
+        }
+
+        footer p {
+            margin-bottom: 0;
+        }
+
+        /* Fondo animado */
+        .bg-animated {
+            background: linear-gradient(135deg, #28a745 0%, #170154 100%);
+            background-size: 400% 400%;
+            animation: gradient 6s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card-img-top {
+            border-bottom: 2px solid #28a745;
+        }
+
+        .card-body {
+            text-align: center;
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-success text-white text-center py-3">
+        <h1>Bienvenido a la Aplicación de Finanzas Personales</h1>
+    </header>
+
+    <main class="container my-5">
+        <section id="intro" class="bg-animated text-center mb-4 p-4 rounded">
+            <div class="bg-light rounded p-4">
+                <h2>Gestiona tus Finanzas con Facilidad</h2>
+                <p>Rastrea tus gastos, administra tu presupuesto y alcanza tus objetivos financieros con nuestra aplicación de finanzas personales fácil de usar.</p>
+            </div>
+        </section>
+
+        <section id="features" class="text-center mb-4">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="Gestión de Presupuesto.png.webp" class="card-img-top" alt="Feature 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Gestión de Presupuesto</h5>
+                            <p class="card-text">Configura y administra tu presupuesto mensual para mantener tus finanzas en orden.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="Seguimiento de Gastos.webp" class="card-img-top" alt="Feature 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Seguimiento de Gastos</h5>
+                            <p class="card-text">Registra y monitorea tus gastos diarios para identificar áreas donde puedas ahorrar.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="Objetivos Financieros.webp" class="card-img-top" alt="Feature 3">
+                        <div class="card-body">
+                            <h5 class="card-title">Objetivos Financieros</h5>
+                            <p class="card-text">Establece y sigue tus objetivos financieros para alcanzar tus sueños y metas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="actions" class="text-center mb-4">
+            <a href="login.html" class="btn btn-primary btn-lg mx-2 btn-animation">Iniciar Sesión</a>
+            <a href="registration.html" class="btn btn-success btn-lg mx-2 btn-animation">Registrarse</a>
+        </section>
+    </main>
+
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2024 Aplicación de Finanzas Personales</p>
+    </footer>
+
+    <!-- Incluir Bootstrap JS y dependencias -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
