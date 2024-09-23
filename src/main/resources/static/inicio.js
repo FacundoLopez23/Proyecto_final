@@ -23,8 +23,16 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(user => {
                 if (user) {
+                    const balanceElement = document.getElementById('balanceAmount');
                     const formattedBalance = user.balance.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
-                    document.getElementById('balanceAmount').textContent = formattedBalance;
+                    balanceElement.textContent = formattedBalance;
+
+                    // Cambiar el color del balance según si es positivo o negativo
+                    if (user.balance < 0) {
+                        balanceElement.style.color = 'red'; // Balance negativo
+                    } else {
+                        balanceElement.style.color = 'inherit'; // Balance positivo o cero (color por defecto)
+                    }
 
                     return user;
                 } else {
@@ -161,6 +169,13 @@ document.addEventListener('DOMContentLoaded', function () {
                                             if (user) {
                                                 const formattedBalance = user.balance.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
                                                 document.getElementById('balanceAmount').textContent = formattedBalance;
+
+                                                // Cambiar el color del balance después de la transacción
+                                                if (user.balance < 0) {
+                                                    document.getElementById('balanceAmount').style.color = 'red';
+                                                } else {
+                                                    document.getElementById('balanceAmount').style.color = 'inherit';
+                                                }
                                             } else {
                                                 showError('Error al obtener el usuario');
                                             }
@@ -239,6 +254,13 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (user) {
                                 const formattedBalance = user.balance.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
                                 document.getElementById('balanceAmount').textContent = formattedBalance;
+
+                                // Cambiar el color del balance después de eliminar la transacción
+                                if (user.balance < 0) {
+                                    document.getElementById('balanceAmount').style.color = 'red';
+                                } else {
+                                    document.getElementById('balanceAmount').style.color = 'inherit';
+                                }
                             } else {
                                 showError('Error al obtener el usuario');
                             }
