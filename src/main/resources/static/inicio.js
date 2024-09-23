@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     showError('Error al obtener las categorías');
                 });
         });
-
+        
         document.getElementById('createCategoryButton').addEventListener('click', function () {
             const categoryFormCard = document.getElementById('categoryFormCard');
             categoryFormCard.style.display = categoryFormCard.style.display === 'none' ? 'block' : 'none';

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajustes - Personal Finance Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Estilos por defecto (modo claro) */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .dark-mode {
+            background-color: #343a40 !important;
+            color: #f8f9fa !important;
+        }
+
+        .dark-mode .card {
+            background-color: #495057;
+            color: #f8f9fa;
+        }
+
+        .dark-mode .navbar {
+            background-color: #495057;
+            border-color: #6c757d;
+        }
+
+        /* Tamaños de fuente personalizados */
+        .small-font {
+            font-size: 0.8rem;
+        }
+
+        .large-font {
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-primary text-white text-center py-3">
+        <h1>Configuración</h1>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href="/inicio.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/perfil.html">Perfil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/ajustes.html">Ajustes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="logoutLink">Cerrar sesión</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mt-4">
+        <section class="mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Ajustes de apariencia</h2>
+                    <div class="form-group">
+                        <label for="darkModeToggle">Modo oscuro:</label>
+                        <input type="checkbox" id="darkModeToggle">
+                    </div>
+                    <div class="form-group">
+                        <label for="fontSizeSelect">Tamaño de la fuente:</label>
+                        <select id="fontSizeSelect" class="form-control">
+                            <option value="default">Por defecto</option>
+                            <option value="small">Pequeño</option>
+                            <option value="large">Grande</option>
+                        </select>
+                    </div>
+                    <button id="saveButton" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-light text-center py-3 mt-4">
+        <p>&copy; 2024 Personal Finance App</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const username = localStorage.getItem('username');  // Obtener el nombre de usuario desde localStorage
+
+            if (!username) {
+                window.location.href = '/login.html';  // Redirigir al login si no hay usuario
+            } else {
+                // Obtener la configuración de usuario
+                fetch(`/api/settings/${username}`)
+                    .then(response => response.json())
+                    .then(settings => {
+                        if (settings.darkModeEnabled) {
+                            document.body.classList.add('dark-mode');  // Aplicar el modo oscuro si está habilitado
+                            document.getElementById('darkModeToggle').checked = true;
+                        }
+                        document.documentElement.style.fontSize = settings.fontSize;  // Aplicar el tamaño de fuente
+                    })
+                    .catch(error => console.error('Error al obtener la configuración de usuario:', error));
+
+                // Evento para el toggle de modo oscuro
+                document.getElementById('darkModeToggle').addEventListener('change', function () {
+                    const isDarkMode = this.checked;
+                    if (isDarkMode) {
+                        document.body.classList.add('dark-mode');
+                    } else {
+                        document.body.classList.remove('dark-mode');
+                    }
+                    localStorage.setItem('darkMode', isDarkMode); // Guardar preferencia en localStorage
+                });
+
+                // Evento para cambiar el tamaño de la fuente
+                document.getElementById('fontSizeSelect').addEventListener('change', function () {
+                    const selectedSize = this.value;
+                    document.body.classList.remove('small-font', 'large-font'); // Resetear fuentes
+                    if (selectedSize === 'small') {
+                        document.body.classList.add('small-font');
+                    } else if (selectedSize === 'large') {
+                        document.body.classList.add('large-font');
+                    }
+                    localStorage.setItem('fontSize', selectedSize); // Guardar preferencia en localStorage
+                });
+
+                // Evento para guardar los ajustes en la base de datos
+                document.getElementById('saveButton').addEventListener('click', function() {
+                    const darkModeEnabled = document.getElementById('darkModeToggle').checked;
+                    const fontSize = document.getElementById('fontSizeSelect').value;
+
+                    fetch(`/api/settings/${username}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ darkModeEnabled, fontSize })
+                    })
+                    .then(response => response.json())
+                    .then(updatedSettings => {
+                        console.log('Ajustes actualizados:', updatedSettings);
+                        alert('Ajustes guardados exitosamente.');
+                    })
+                    .catch(error => console.error('Error al guardar los ajustes:', error));
+                });
+
+                document.getElementById('logoutLink').addEventListener('click', function() {
+                    localStorage.clear();
+                    window.location.href = '/home.html';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
