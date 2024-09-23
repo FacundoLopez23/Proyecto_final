@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const currentPassword = document.getElementById('currentPassword').value;
             const newPassword = document.getElementById('newPassword').value;
 
-            fetch(`/api/users/${username}/change-password`, {
+            fetch(`/api/users/${username}/password`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ currentPassword, newPassword })
