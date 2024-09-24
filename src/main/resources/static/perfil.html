@@ -12,6 +12,36 @@
             transition: transform 0.3s ease-in-out;
         }
 
+        /* Estilos para modo oscuro */
+        body.dark-mode {
+            background-color: #121212;
+            color: #f8f9fa;
+        }
+        .dark-mode .bg-primary {
+            background-color: #003063 !important;
+        }
+        footer {
+            color: #000000;
+        }
+        .dark-mode .bg-light {
+            background-color: #495057 !important;
+        }
+        .dark-mode .modal-content{
+            background-color: #495057 !important;
+        }
+
+        /* Cambiar color de las tarjetas en modo oscuro */
+        .dark-mode .card {
+            background-color: #2c2c2c; /* Color gris claro para las tarjetas en modo oscuro */
+            color: #f8f9fa; /* Color de texto claro para que sea visible */
+            box-shadow: none;
+        }
+
+        /* Cambiar color de los títulos de las tarjetas en modo oscuro */
+        .dark-mode .card-title {
+            color: #ffffff;
+        }
+
         .nav-item:hover {
             transform: scale(1.1);
         }
@@ -52,6 +82,19 @@
             width: 20px; /* Tamaño del icono */
             height: 20px; /* Tamaño del icono */
         }
+
+        /* Estilo dinámico del tamaño de fuente */
+        body.small-font {
+            font-size: 12px;
+        }
+
+        body.medium-font {
+            font-size: 16px;
+        }
+
+        body.large-font {
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
@@ -61,7 +104,8 @@
             <div class="container">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item"><a class="nav-link" href="/inicio.html">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Ajustes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/perfil.html">Perfil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/ajustes.html">Ajustes</a></li>
                     <li class="nav-item"><a class="nav-link" href="#" id="logoutLink">Cerrar sesión</a></li>
                 </ul>
             </div>
@@ -148,3 +192,24 @@
     
     <!-- Tu script personalizado -->
     <script src="perfil.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const username = localStorage.getItem("username"); // Obtener el nombre de usuario de localStorage
+
+            if (username) {
+                // Realizamos la solicitud para obtener la configuración del usuario
+                fetch(`/api/settings/${username}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.darkModeEnabled) {
+                            document.body.classList.add("dark-mode"); // Activar el modo oscuro
+                        }
+                        // Cambiar el tamaño de la fuente según la configuración
+                        document.body.classList.add(`${data.fontSize}-font`);
+                    })
+                    .catch(error => console.error("Error al obtener la configuración del usuario:", error));
+            }
+        });
+    </script>
+</body>
+</html>

@@ -50,7 +50,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 showError('Error al cambiar el nombre de usuario');
             });
         });
-
+        document.addEventListener('DOMContentLoaded', function () {
+            const username = localStorage.getItem('username');
+        
+            if (username) {
+                fetch(`/api/settings/${username}`)
+                    .then(response => response.json())
+                    .then(settings => {
+                        if (settings.dark_mode) {
+                            document.body.classList.add('dark-mode');
+                        }
+                        document.body.style.fontSize = settings.font_size === 'small' ? '12px' : settings.font_size === 'large' ? '18px' : '16px';
+                    })
+                    .catch(error => {
+                        console.error('Error al aplicar los ajustes:', error);
+                    });
+            }
+        });
+        
         // Event listener para cambiar la contraseña
         document.getElementById('changePasswordForm').addEventListener('submit', function (event) {
             event.preventDefault();

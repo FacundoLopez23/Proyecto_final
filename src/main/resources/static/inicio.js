@@ -11,8 +11,22 @@ document.addEventListener('DOMContentLoaded', function () {
             item.classList.add('active');
         }
     });
+   
 
+    
     const username = localStorage.getItem('username');
+    if (username) {
+        // Realizamos la solicitud para obtener la configuración del usuario
+        fetch(`/api/settings/${username}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.darkModeEnabled) {
+                    document.body.classList.add("dark-mode"); // Activar el modo oscuro
+                }
+                document.documentElement.style.fontSize = settings.fontSize;  // Aplicar el tamaño de fuente
+            })
+            .catch(error => console.error("Error al obtener la configuración del usuario:", error));
+    }
 
     if (!username) {
         window.location.href = '/login.html';
@@ -203,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     showError('Error al obtener las categorías');
                 });
         });
-
+        
         document.getElementById('createCategoryButton').addEventListener('click', function () {
             const categoryFormCard = document.getElementById('categoryFormCard');
             categoryFormCard.style.display = categoryFormCard.style.display === 'none' ? 'block' : 'none';
