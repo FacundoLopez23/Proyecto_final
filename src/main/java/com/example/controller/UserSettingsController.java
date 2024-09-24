@@ -14,17 +14,31 @@ public class UserSettingsController {
     @Autowired
     private UserSettingsService userSettingsService;
 
+    // Obtener configuraciones de usuario (modo oscuro, tamaño de fuente, etc.)
     @GetMapping("/{username}")
     public ResponseEntity<UserSettings> getUserSettings(@PathVariable String username) {
         UserSettings settings = userSettingsService.getUserSettings(username);
-        return ResponseEntity.ok(settings);
+        if (settings != null) {
+            return ResponseEntity.ok(settings);
+        } else {
+            return ResponseEntity.notFound().build();  // Devolver 404 si no se encuentran ajustes
+        }
     }
 
+    // Actualizar configuraciones de usuario
     @PutMapping("/{username}")
     public ResponseEntity<UserSettings> updateUserSettings(@PathVariable String username,
                                                            @RequestBody UserSettings settings) {
-        // Aquí asumimos que `UserSettings` tiene los atributos `darkModeEnabled` y `fontSize`
-        UserSettings updatedSettings = userSettingsService.updateUserSettings(username, settings.isDarkModeEnabled(), settings.getFontSize());
-        return ResponseEntity.ok(updatedSettings);
+        if (settings != null) {
+            // Actualizar y devolver las nuevas configuraciones
+            UserSettings updatedSettings = userSettingsService.updateUserSettings(
+                username, 
+                settings.isDarkModeEnabled(), 
+                settings.getFontSize()
+            );
+            return ResponseEntity.ok(updatedSettings);
+        } else {
+            return ResponseEntity.badRequest().build();  // Devolver 400 si hay un error en los datos recibidos
+        }
     }
 }

@@ -13,6 +13,34 @@
             color: #333;
         }
 
+        /* Estilos para modo oscuro */
+        body.dark-mode {
+            background-color: #121212;
+            color: #f8f9fa;
+        }
+        .dark-mode .bg-primary {
+            background-color: #003063 !important;
+        }
+        footer {
+            
+            color: #000000;
+        }
+        .dark-mode .bg-light{
+            background-color: #495057 !important;
+        }
+        
+        /* Cambiar color de las tarjetas en modo oscuro */
+        .dark-mode .card {
+            background-color: #2c2c2c; /* Color gris claro para las tarjetas en modo oscuro */
+            color: #f8f9fa; /* Color de texto claro para que sea visible */
+            box-shadow: none;
+        }
+
+        /* Cambiar color de los títulos de las tarjetas en modo oscuro */
+        .dark-mode .card-title {
+            color: #ffffff;
+        }
+
         .nav-item {
             transition: transform 0.3s ease-in-out;
         }
@@ -74,6 +102,7 @@
         .alert {
             transition: opacity 0.5s ease;
         }
+
 
         #categoryFormCard {
             display: none;
@@ -172,5 +201,6 @@
     
     <!-- Custom Script -->
     <script src="inicio.js"></script>
+
 </body>
 </html>
