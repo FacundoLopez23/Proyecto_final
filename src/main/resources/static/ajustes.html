@@ -18,33 +18,27 @@
             background-color: #003063 !important;
         }
         footer {
-            
             color: #000000;
         }
-        .dark-mode .bg-light{
+        .dark-mode .bg-light {
             background-color: #495057 !important;
         }
         .dark-mode {
             background-color: #121212 !important;
             color: #f8f9fa !important;
         }
-
         .dark-mode .card {
             background-color: #2c2c2c;
             color: #f8f9fa;
         }
-
-       
         .dark-mode .navbar {
             background-color: #495057;
             border-color: #6c757d;
         }
-
         /* Tamaños de fuente personalizados */
         .small-font {
             font-size: 0.8rem;
         }
-
         .large-font {
             font-size: 1.25rem;
         }
@@ -76,10 +70,9 @@
                     </div>
                     <div class="form-group">
                         <label for="fontSizeSelect">Tamaño de la fuente:</label>
+                        <p id="currentFontSizeText" class="font-italic">Tamaño actual: </p> <!-- Display current font size -->
                         <select id="fontSizeSelect" class="form-control">
-                            <option value="default">Por defecto</option>
-                            <option value="small">Pequeño</option>
-                            <option value="large">Grande</option>
+                            <!-- Options will be dynamically added by JavaScript -->
                         </select>
                     </div>
                     <button id="saveButton" class="btn btn-primary">Guardar</button>
@@ -98,20 +91,20 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
     <script>
-        
         document.addEventListener('DOMContentLoaded', function () {
             const currentPath = window.location.pathname;
 
-    // Obtener todos los elementos de la barra de navegación
-    const navItems = document.querySelectorAll('.nav-item');
+            // Obtener todos los elementos de la barra de navegación
+            const navItems = document.querySelectorAll('.nav-item');
 
-    // Iterar sobre los elementos y añadir la clase 'active' al botón correspondiente
-    navItems.forEach(item => {
-        const link = item.querySelector('a');
-        if (link.getAttribute('href') === currentPath) {
-            item.classList.add('active');
-        }
-    });
+            // Iterar sobre los elementos y añadir la clase 'active' al botón correspondiente
+            navItems.forEach(item => {
+                const link = item.querySelector('a');
+                if (link.getAttribute('href') === currentPath) {
+                    item.classList.add('active');
+                }
+            });
+
             const username = localStorage.getItem('username');  // Obtener el nombre de usuario desde localStorage
 
             if (!username) {
@@ -125,7 +118,30 @@
                             document.body.classList.add('dark-mode');  // Aplicar el modo oscuro si está habilitado
                             document.getElementById('darkModeToggle').checked = true;
                         }
-                        document.documentElement.style.fontSize = settings.fontSize;  // Aplicar el tamaño de fuente
+
+                        // Mostrar el tamaño de fuente actual
+                        const currentFontSize = settings.fontSize;
+                        document.getElementById('currentFontSizeText').textContent = `Tamaño actual: ${currentFontSize}`;
+
+                        // Aplicar el tamaño de fuente guardado
+                        document.body.classList.remove('small-font', 'large-font'); // Resetear fuentes
+                        if (currentFontSize === 'small') {
+                            document.body.classList.add('small-font');
+                        } else if (currentFontSize === 'large') {
+                            document.body.classList.add('large-font');
+                        }
+
+                        // Llenar el dropdown con las opciones restantes de tamaño de fuente
+                        const fontSizeSelect = document.getElementById('fontSizeSelect');
+                        const fontSizes = ['small', 'default', 'large'];
+                        fontSizes.forEach(size => {
+                            if (size !== currentFontSize) {
+                                const option = document.createElement('option');
+                                option.value = size;
+                                option.textContent = size === 'default' ? 'Por defecto' : size.charAt(0).toUpperCase() + size.slice(1);
+                                fontSizeSelect.appendChild(option);
+                            }
+                        });
                     })
                     .catch(error => console.error('Error al obtener la configuración de usuario:', error));
 

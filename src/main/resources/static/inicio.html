@@ -22,17 +22,16 @@
             background-color: #003063 !important;
         }
         footer {
-            
             color: #000000;
         }
-        .dark-mode .bg-light{
+        .dark-mode .bg-light {
             background-color: #495057 !important;
         }
         
         /* Cambiar color de las tarjetas en modo oscuro */
         .dark-mode .card {
-            background-color: #2c2c2c; /* Color gris claro para las tarjetas en modo oscuro */
-            color: #f8f9fa; /* Color de texto claro para que sea visible */
+            background-color: #2c2c2c;
+            color: #f8f9fa;
             box-shadow: none;
         }
 
@@ -103,9 +102,17 @@
             transition: opacity 0.5s ease;
         }
 
-
         #categoryFormCard {
             display: none;
+        }
+
+        /* Tamaños de fuente personalizados */
+        .small-font {
+            font-size: 0.8rem;
+        }
+
+        .large-font {
+            font-size: 1.25rem;
         }
     </style>
 </head>
@@ -200,7 +207,38 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
     <!-- Custom Script -->
-    <script src="inicio.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const username = localStorage.getItem('username');  // Obtener el nombre de usuario desde localStorage
+
+            if (!username) {
+                window.location.href = '/login.html';  // Redirigir al login si no hay usuario
+            } else {
+                // Obtener la configuración de usuario
+                fetch(`/api/settings/${username}`)
+                    .then(response => response.json())
+                    .then(settings => {
+                        if (settings.darkModeEnabled) {
+                            document.body.classList.add('dark-mode');  // Aplicar el modo oscuro si está habilitado
+                        }
+
+                        // Aplicar el tamaño de fuente guardado
+                        document.body.classList.remove('small-font', 'large-font');  // Resetear fuentes
+                        if (settings.fontSize === 'small') {
+                            document.body.classList.add('small-font');
+                        } else if (settings.fontSize === 'large') {
+                            document.body.classList.add('large-font');
+                        }
+                    })
+                    .catch(error => console.error('Error al obtener la configuración de usuario:', error));
+            }
+
+            document.getElementById('logoutLink').addEventListener('click', function() {
+                localStorage.clear();
+                window.location.href = '/home.html';
+            });
+        });
+    </script>
 
 </body>
 </html>
