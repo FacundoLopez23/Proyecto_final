@@ -1,5 +1,5 @@
 package com.example.controller;
-//Vamos a agregar un comentario
+
 import com.example.model.Category;
 import com.example.model.User;
 import com.example.service.CategoryService;
