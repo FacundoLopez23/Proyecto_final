@@ -4,12 +4,16 @@ package com.example.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.model.User;
 import com.example.service.UserService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -38,13 +42,23 @@ public class RegistrationController {
         return "User registered successfully";
     }
 
-     @PostMapping("/login")
-    public String loginUser(@RequestBody User user) {
-        Optional<User> authenticatedUser = userService.authenticate(user.getUsername(), user.getPassword());
-        if (authenticatedUser.isPresent()) {
-            return "Login successful";
-        } else {
-            return "Invalid username or password";
-        }
+   @PostMapping("/login")
+public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> credentials) {
+    String username = credentials.get("username");
+    String password = credentials.get("password");
+    
+    Optional<User> user = userService.authenticate(username, password);
+    if (user.isPresent()) {
+        Map<String, Object> response = new HashMap<>();
+        User loggedUser = user.get();
+        response.put("message", "Login successful");
+        response.put("activo", loggedUser.getActivo());
+        
+        return ResponseEntity.ok(response);
+    } else {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                             .body(Map.of("message", "Usuario o contraseña incorrecta"));
     }
+}
+
 }

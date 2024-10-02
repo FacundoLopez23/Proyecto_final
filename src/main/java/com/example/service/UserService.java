@@ -32,7 +32,7 @@ public class UserService {
 
     public Optional<User> authenticate(String username, String password) {
         Optional<User> user = findByUsername(username);
-        if (user.isPresent() && user.get().getPassword().equals(password)) {
+        if (user.isPresent() && user.get().getPassword().equals(password) && user.get().getActivo() == 1) { // Solo usuarios activos pueden autenticarse
             return user;
         } else {
             return Optional.empty();
@@ -44,6 +44,18 @@ public class UserService {
         if (user.isPresent()) {
             User existingUser = user.get();
             existingUser.setUsername(newUsername);
+            return Optional.of(save(existingUser));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    // Método para desactivar la cuenta
+    public Optional<User> deactivateAccount(String username) {
+        Optional<User> user = findByUsername(username);
+        if (user.isPresent()) {
+            User existingUser = user.get();
+            existingUser.setActivo(0); // Poner activo en 0 para desactivar la cuenta
             return Optional.of(save(existingUser));
         } else {
             return Optional.empty();

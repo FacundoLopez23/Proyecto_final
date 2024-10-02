@@ -35,15 +35,19 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!response.ok) {
                 throw new Error('Error en la solicitud.');
             }
-            return response.text();
+            return response.json(); // Aquí asumimos que el backend devuelve un JSON con los datos del usuario, incluyendo 'activo'
         })
-        .then(data => {
-            if (data === 'Login successful') {
+        .then(userData => {
+            if (userData.activo === 0) {
+                // Si la cuenta está desactivada, no permitir acceso
+                throw new Error('La cuenta se encuentra cerrada.');
+            }
+            if (userData.message === 'Login successful') {
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('username', document.getElementById('username').value);
                 window.location.href = '/inicio.html'; // Redirige a la página de inicio
             } else {
-                throw new Error(data);
+                throw new Error(userData.message);
             }
         })
         .catch(error => {
@@ -62,16 +66,19 @@ document.addEventListener('DOMContentLoaded', function () {
         usernameInput.classList.remove('is-invalid');
         passwordInput.classList.remove('is-invalid');
 
-        if (errorMessage.includes('username')) {
+        if (errorMessage.includes('Usuario incorrecto')) {
             usernameInput.classList.add('is-invalid');
             document.querySelector('.username-error').textContent = 'Usuario incorrecto.';
         } else {
             usernameInput.classList.add('is-valid');
         }
 
-        if (errorMessage.includes('password')) {
+        if (errorMessage.includes('Contraseña incorrecta')) {
             passwordInput.classList.add('is-invalid');
             document.querySelector('.password-error').textContent = 'Contraseña incorrecta.';
+        } else if (errorMessage.includes('cerrada')) {
+            usernameInput.classList.add('is-invalid');
+            document.querySelector('.username-error').textContent = 'La cuenta se encuentra cerrada.';
         } else {
             passwordInput.classList.add('is-valid');
         }
