@@ -50,24 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 showError('Error al cambiar el nombre de usuario');
             });
         });
-        document.addEventListener('DOMContentLoaded', function () {
-            const username = localStorage.getItem('username');
-        
-            if (username) {
-                fetch(`/api/settings/${username}`)
-                    .then(response => response.json())
-                    .then(settings => {
-                        if (settings.dark_mode) {
-                            document.body.classList.add('dark-mode');
-                        }
-                        document.body.style.fontSize = settings.font_size === 'small' ? '12px' : settings.font_size === 'large' ? '18px' : '16px';
-                    })
-                    .catch(error => {
-                        console.error('Error al aplicar los ajustes:', error);
-                    });
-            }
-        });
-        
+
         // Event listener para cambiar la contraseña
         document.getElementById('changePasswordForm').addEventListener('submit', function (event) {
             event.preventDefault();
@@ -116,11 +99,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Event listener para cerrar la cuenta
         document.getElementById('confirmCloseAccount').addEventListener('click', function () {
-            // Aquí deberías implementar la lógica para cerrar la cuenta
-            // Ejemplo de fetch o llamada a la API para cerrar la cuenta
-
-            // Ejemplo de mensaje de éxito
-            showSuccess('Cuenta cerrada correctamente');
+            // Lógica para cerrar la cuenta
+            fetch(`/api/users/${username}/deactivate`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ activo: 0 }) // Actualizar activo a 0
+            })
+            .then(response => {
+                if (response.ok) {
+                    showSuccess('Cuenta cerrada correctamente');
+                    setTimeout(() => {
+                        // Cerrar la sesión después de cerrar la cuenta
+                        localStorage.clear();
+                        window.location.href = '/login.html';
+                    }, 2000); // Espera 2 segundos antes de cerrar la sesión
+                } else {
+                    showError('Error al cerrar la cuenta');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Error al cerrar la cuenta');
+            });
         });
 
         // Event listener para cerrar sesión

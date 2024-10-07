@@ -53,7 +53,7 @@ public class UserController {
             if (!existingUser.getPassword().equals(currentPassword)) {
                 return ResponseEntity.badRequest().body("Contraseña actual incorrecta");
             }
-            
+
             existingUser.setPassword(newPassword);
             userService.save(existingUser);
             return ResponseEntity.ok("Contraseña cambiada correctamente");
@@ -61,4 +61,16 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // Desactivar cuenta
+    @PutMapping("/{username}/deactivate")
+    public ResponseEntity<String> deactivateAccount(@PathVariable String username) {
+        Optional<User> user = userService.deactivateAccount(username);
+        if (user.isPresent()) {
+            return ResponseEntity.ok("Cuenta desactivada correctamente");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
+
