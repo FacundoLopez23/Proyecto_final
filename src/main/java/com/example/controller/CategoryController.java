@@ -1,6 +1,4 @@
 package com.example.controller;
-//Vamos a agregar un comentario
-//Nueva Branch
 import com.example.model.Category;
 import com.example.model.User;
 import com.example.service.CategoryService;
