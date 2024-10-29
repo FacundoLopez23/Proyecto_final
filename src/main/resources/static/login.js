@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!response.ok) {
                 throw new Error('Error en la solicitud.');
             }
-            return response.json(); // Aquí asumimos que el backend devuelve un JSON con los datos del usuario, incluyendo 'activo'
+            return response.json();
         })
         .then(userData => {
             if (userData.activo === 0) {
@@ -45,7 +45,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (userData.message === 'Login successful') {
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('username', document.getElementById('username').value);
-                window.location.href = '/inicio.html'; // Redirige a la página de inicio
+                document.getElementById('username').classList.add('is-valid');
+                document.getElementById('password').classList.add('is-valid');
+                window.location.href = '/inicio.html';
             } else {
                 throw new Error(userData.message);
             }
@@ -57,20 +59,20 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Redirigir al formulario de registro al hacer clic en el botón correspondiente
-    document.getElementById('regButton').addEventListener('click', redirectToRegistration);
+    document.getElementById('registerButton').addEventListener('click', redirectToRegistration);
 
     // Función para manejar errores de validación y mostrar mensajes adecuados
     function handleLoginError(errorMessage) {
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
-        usernameInput.classList.remove('is-invalid');
-        passwordInput.classList.remove('is-invalid');
+        usernameInput.classList.remove('is-valid', 'is-invalid');
+        passwordInput.classList.remove('is-valid', 'is-invalid');
 
         if (errorMessage.includes('Usuario incorrecto')) {
             usernameInput.classList.add('is-invalid');
             document.querySelector('.username-error').textContent = 'Usuario incorrecto.';
         } else {
-            usernameInput.classList.add('is-valid');
+            usernameInput.classList.add('is-invalid');
         }
 
         if (errorMessage.includes('Contraseña incorrecta')) {
@@ -80,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
             usernameInput.classList.add('is-invalid');
             document.querySelector('.username-error').textContent = 'La cuenta se encuentra cerrada.';
         } else {
-            passwordInput.classList.add('is-valid');
+            passwordInput.classList.add('is-invalid');
         }
     }
 });

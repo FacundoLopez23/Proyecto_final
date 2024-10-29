@@ -286,6 +286,26 @@
                 localStorage.clear();
                 window.location.href = '/home.html';
             });
+            // Verificar si hay un usuario logueado
+            if (username) { // Ya tenemos username del localStorage
+                // Obtener el género del usuario  
+                fetch(`/api/users/${username}`)
+                    .then(response => response.json())
+                    .then(user => {
+                        const welcomeMessage = document.getElementById('welcomeMessage');
+                        switch(user.genero) {
+                            case 'masculino':
+                                welcomeMessage.textContent = "Bienvenido a tu página de finanzas personales, "+username;
+                                break;
+                            case 'femenino':
+                                welcomeMessage.textContent = "Bienvenida a tu página de finanzas personales, "+username;
+                                break;
+                            default:
+                                welcomeMessage.textContent = "Bienvenid@ a tu página de finanzas personales, "+username;
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
         });
     </script>
 

@@ -17,7 +17,26 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!username) {
         window.location.href = '/login.html';
     } else {
-        document.getElementById('welcomeMessage').textContent = `Bienvenido, ${username}`;
+        // Obtener el género del usuario y actualizar el mensaje de bienvenida
+        fetch(`/api/users/${username}`)
+            .then(response => response.json())
+            .then(user => {
+                const welcomeMessage = document.getElementById('welcomeMessage');
+                switch(user.genero) {
+                    case 'masculino':
+                        welcomeMessage.textContent = `Bienvenido a tu perfil, ${username}`;
+                        break;
+                    case 'femenino':
+                        welcomeMessage.textContent = `Bienvenida a tu perfil, ${username}`;
+                        break;
+                    default:
+                        welcomeMessage.textContent = `Bienvenid@ a tu perfil, ${username}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                welcomeMessage.textContent = `Bienvenid@ a tu perfil, ${username}`;
+            });
 
         // Event listener para cambiar el nombre de usuario
         document.getElementById('changeUsernameForm').addEventListener('submit', function (event) {

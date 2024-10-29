@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
             apellido: document.getElementById('apellido').value,
             username: document.getElementById('username').value,
             password: document.getElementById('password').value,
-            email: document.getElementById('email').value
+            email: document.getElementById('email').value,
+            genero: document.getElementById('genero').value
         };
 
         fetch('/api/registration', {

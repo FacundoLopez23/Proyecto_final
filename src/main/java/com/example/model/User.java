@@ -30,6 +30,9 @@ public class User {
     private String email;
 
     @Column(nullable = false)
+    private String genero;
+
+    @Column(nullable = false)
     private Double balance = 0.0;
 
     @Column(nullable = false)
