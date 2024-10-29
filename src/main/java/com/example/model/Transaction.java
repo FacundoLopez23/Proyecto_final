@@ -3,6 +3,7 @@ package com.example.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -26,4 +27,7 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Column(nullable = false)
+    private LocalDate date;
 }

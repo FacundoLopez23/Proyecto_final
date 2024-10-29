@@ -78,5 +78,14 @@ public ResponseEntity<Category> createCategory(@RequestBody Map<String, Object> 
     }
 }
 
+@DeleteMapping("/{categoryId}")
+public ResponseEntity<?> deleteCategory(@PathVariable Long categoryId) {
+    try {
+        categoryService.deleteCategory(categoryId);
+        return ResponseEntity.ok().build();
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
+}
 
 }

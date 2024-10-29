@@ -140,22 +140,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.getElementById('transactionForm').addEventListener('submit', function (event) {
             event.preventDefault();
-            const selectedCategoryName = document.getElementById('type').value; // Tomar el nombre de la categoría seleccionada
+            const selectedCategoryName = document.getElementById('type').value;
             const amount = parseFloat(document.getElementById('amount').value);
+            const date = document.getElementById('date').value;
 
-            // Obtener el tipo de categoría (ingreso/gasto) desde las categorías
             fetch(`/api/categories/${username}`)
                 .then(response => response.json())
                 .then(categories => {
                     const selectedCategory = categories.find(category => category.name === selectedCategoryName);
                     if (selectedCategory) {
-                        const transactionType = selectedCategory.type; // Usar el tipo de la categoría
-                        const description = selectedCategoryName; // Usar el nombre de la categoría como descripción
+                        const transactionType = selectedCategory.type;
+                        const description = selectedCategoryName;
 
                         fetch(`/api/users/${username}`)
                             .then(response => response.json())
                             .then(user => {
-                                const transaction = { description, amount, type: transactionType, user: user };
+                                const transaction = { 
+                                    description, 
+                                    amount, 
+                                    type: transactionType, 
+                                    date: date,
+                                    user: user 
+                                };
 
                                 fetch('/api/transactions', {
                                     method: 'POST',
@@ -232,11 +238,20 @@ document.addEventListener('DOMContentLoaded', function () {
             const card = document.createElement('div');
             card.classList.add('col-md-4', 'mb-3');
             card.id = `transactionCard${transaction.id}`;
+            
+            const date = new Date(transaction.date);
+            const formattedDate = date.toLocaleDateString('es-AR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+
             card.innerHTML = `
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">${transaction.description}</h5>
                         <p class="card-text">${transaction.amount.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })} (${transaction.type})</p>
+                        <p class="card-text"><small class="text-muted">Fecha: ${formattedDate}</small></p>
                         <button class="btn btn-danger delete-button">Eliminar</button>
                     </div>
                 </div>
@@ -326,5 +341,103 @@ document.addEventListener('DOMContentLoaded', function () {
                 alertDiv.remove();
             }, 3000); // Remover la alerta después de 3 segundos
         }
+
+        document.getElementById('deleteCategoryButton').addEventListener('click', function() {
+            // Obtener categorías actuales y llenar el select
+            const username = localStorage.getItem('username');
+            fetch(`/api/categories/${username}`)
+                .then(response => response.json())
+                .then(categories => {
+                    const select = document.getElementById('categoryToDelete');
+                    select.innerHTML = ''; // Limpiar opciones anteriores
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        select.appendChild(option);
+                    });
+                    $('#deleteCategoryModal').modal('show');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('Error al cargar las categorías');
+                });
+        });
+
+        document.getElementById('confirmDeleteCategory').addEventListener('click', function() {
+            const categoryId = document.getElementById('categoryToDelete').value;
+            const categoryName = document.getElementById('categoryToDelete').options[document.getElementById('categoryToDelete').selectedIndex].text;
+
+            fetch(`/api/categories/${categoryId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al eliminar la categoría');
+                }
+                $('#deleteCategoryModal').modal('hide');
+                showSuccess(`Categoría "${categoryName}" y sus transacciones eliminadas correctamente`);
+                
+                // Actualizar la lista de categorías
+                const username = localStorage.getItem('username');
+                return fetch(`/api/categories/${username}`);
+            })
+            .then(response => response.json())
+            .then(categories => {
+                updateCategoryOptions(categories);
+                // Actualizar el balance
+                return fetch(`/api/users/${username}`);
+            })
+            .then(response => response.json())
+            .then(user => {
+                const formattedBalance = user.balance.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
+                document.getElementById('balanceAmount').textContent = formattedBalance;
+                
+                // Actualizar la lista de transacciones
+                location.reload(); // Recarga la página para actualizar todas las transacciones
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Error al eliminar la categoría');
+            });
+        });
+
+        // Establecer la fecha actual por defecto
+        const now = new Date();
+        document.getElementById('date').value = now.toISOString().split('T')[0];
+
+        // Agregar el evento para el cambio de período
+        document.getElementById('periodFilter').addEventListener('change', function() {
+            loadTransactions(this.value);
+        });
+
+        // Función para cargar transacciones
+        function loadTransactions(period) {
+            const username = localStorage.getItem('username');
+            document.getElementById('transactionCards').innerHTML = ''; // Limpiar transacciones existentes
+            
+            fetch(`/api/transactions/${username}/${period}`)
+                .then(response => response.json())
+                .then(transactions => {
+                    if (transactions && transactions.length > 0) {
+                        transactions.forEach(transaction => {
+                            const transactionCard = createTransactionCard(transaction);
+                            document.getElementById('transactionCards').appendChild(transactionCard);
+                        });
+                    } else {
+                        const noTransactionsMessage = document.createElement('div');
+                        noTransactionsMessage.className = 'col-12 text-center';
+                        noTransactionsMessage.innerHTML = '<p>No hay transacciones para este período</p>';
+                        document.getElementById('transactionCards').appendChild(noTransactionsMessage);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('Error al obtener las transacciones');
+                });
+        }
+
+        // Cargar transacciones iniciales (mes actual por defecto)
+        loadTransactions('month');
     }
 });

@@ -7,6 +7,7 @@ import com.example.model.User;
 import com.example.service.TransactionService;
 import com.example.service.UserService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,11 +30,12 @@ public class TransactionController {
             throw new IllegalArgumentException("User not found");
         }
     }
+
     @DeleteMapping("/{id}")
     public void deleteTransaction(@PathVariable Long id) {
         transactionService.deleteTransaction(id);
     }
-    
+
     @PostMapping
     public Transaction addTransaction(@RequestBody Transaction transaction) {
         Optional<User> user = userService.findByUsername(transaction.getUser().getUsername());
@@ -42,6 +44,35 @@ public class TransactionController {
             return transactionService.saveTransaction(transaction);
         } else {
             throw new IllegalArgumentException("User not found");
+        }
+    }
+
+    @GetMapping("/{username}/{period}")
+    public List<Transaction> getUserTransactionsByPeriod(
+            @PathVariable String username,
+            @PathVariable String period) {
+        Optional<User> user = userService.findByUsername(username);
+        if (user.isPresent()) {
+            return transactionService.getUserTransactionsByPeriod(user.get().getId(), period);
+        } else {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+    }
+
+    @GetMapping("/{username}/filtered")
+    public List<Transaction> getFilteredTransactions(
+            @PathVariable String username,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate) {
+        Optional<User> user = userService.findByUsername(username);
+        if (user.isPresent()) {
+            return transactionService.getTransactionsBetweenDates(
+                user.get().getId(), 
+                startDate, 
+                endDate
+            );
+        } else {
+            throw new IllegalArgumentException("Usuario no encontrado");
         }
     }
 }

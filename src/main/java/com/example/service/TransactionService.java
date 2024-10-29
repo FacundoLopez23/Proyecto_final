@@ -9,6 +9,7 @@ import com.example.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,5 +67,31 @@ public class TransactionService {
         } else {
             throw new IllegalArgumentException("Usuario no encontrado");
         }
+    }
+
+    public List<Transaction> getUserTransactionsByPeriod(Long userId, String period) {
+        LocalDate now = LocalDate.now();
+        LocalDate startDate;
+        
+        switch (period) {
+            case "today":
+                return transactionRepository.findByUserIdAndDate(userId, now);
+            case "week":
+                startDate = now.minusWeeks(1);
+                return transactionRepository.findByUserIdAndDateBetween(userId, startDate, now);
+            case "month":
+                startDate = now.withDayOfMonth(1);
+                return transactionRepository.findByUserIdAndDateBetween(userId, startDate, now);
+            case "year":
+                startDate = now.withDayOfYear(1);
+                return transactionRepository.findByUserIdAndDateBetween(userId, startDate, now);
+            case "all":
+            default:
+                return transactionRepository.findByUserId(userId);
+        }
+    }
+
+    public List<Transaction> getTransactionsBetweenDates(Long userId, LocalDate startDate, LocalDate endDate) {
+        return transactionRepository.findByUserIdAndDateBetween(userId, startDate, endDate);
     }
 }
