@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.darkModeEnabled) {
                     document.body.classList.add("dark-mode"); // Activar el modo oscuro
                 }
-                document.documentElement.style.fontSize = settings.fontSize;  // Aplicar el tamaño de fuente
+                document.documentElement.style.fontSize = data.fontSize;  // Aplicar el tamaño de fuente
             })
             .catch(error => console.error("Error al obtener la configuración del usuario:", error));
     }
@@ -58,6 +58,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(response => response.json())
                     .then(transactions => {
                         if (transactions) {
+                            // Limpiar el contenedor antes de agregar las transacciones
+                            document.getElementById('transactionCards').innerHTML = '';
                             transactions.forEach(transaction => {
                                 const transactionCard = createTransactionCard(transaction);
                                 document.getElementById('transactionCards').appendChild(transactionCard);
@@ -142,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
             const selectedCategoryName = document.getElementById('type').value;
             const amount = parseFloat(document.getElementById('amount').value);
-            const date = document.getElementById('date').value;
+            const date = document.getElementById('date').value + 'T00:00:00.000Z';
 
             fetch(`/api/categories/${username}`)
                 .then(response => response.json())
@@ -239,11 +241,12 @@ document.addEventListener('DOMContentLoaded', function () {
             card.classList.add('col-md-4', 'mb-3');
             card.id = `transactionCard${transaction.id}`;
             
-            const date = new Date(transaction.date);
+            const date = new Date(transaction.date + 'T00:00:00');
             const formattedDate = date.toLocaleDateString('es-AR', {
                 year: 'numeric',
                 month: '2-digit',
-                day: '2-digit'
+                day: '2-digit',
+                timeZone: 'UTC'
             });
 
             card.innerHTML = `

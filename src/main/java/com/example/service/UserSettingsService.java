@@ -49,4 +49,35 @@ public class UserSettingsService {
         defaultSettings.setFontSize("16px");  // Tamaño de fuente por defecto
         return userSettingsRepository.save(defaultSettings); // Guardamos los ajustes por defecto
     }
+
+    public void updateUsername(String oldUsername, String newUsername) {
+        try {
+            Optional<UserSettings> settingsOptional = userSettingsRepository.findByUsername(oldUsername);
+            if (settingsOptional.isPresent()) {
+                UserSettings oldSettings = settingsOptional.get();
+                
+                // Crear nuevos ajustes con el nuevo username
+                UserSettings newSettings = new UserSettings();
+                newSettings.setUsername(newUsername);
+                newSettings.setDarkModeEnabled(oldSettings.isDarkModeEnabled());
+                newSettings.setFontSize(oldSettings.getFontSize());
+                
+                // Primero guardamos los nuevos ajustes
+                userSettingsRepository.save(newSettings);
+                
+                // Luego eliminamos los ajustes antiguos
+                userSettingsRepository.delete(oldSettings);
+            } else {
+                // Si no hay ajustes, crear unos por defecto
+                UserSettings defaultSettings = new UserSettings();
+                defaultSettings.setUsername(newUsername);
+                defaultSettings.setDarkModeEnabled(false);
+                defaultSettings.setFontSize("16px");
+                userSettingsRepository.save(defaultSettings);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Para ver el error en los logs del servidor
+            throw new RuntimeException("Error al actualizar los ajustes del usuario: " + e.getMessage());
+        }
+    }
 }

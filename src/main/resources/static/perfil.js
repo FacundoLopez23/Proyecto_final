@@ -46,27 +46,28 @@ document.addEventListener('DOMContentLoaded', function () {
             fetch(`/api/users/${username}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: newUsername }) // Asegúrate de que esto sea un objeto JSON
+                body: JSON.stringify({ username: newUsername })
             })
             .then(response => {
-                if (response.ok) {
-                    localStorage.setItem('username', newUsername);
-                    document.getElementById('welcomeMessage').textContent = `Bienvenido, ${newUsername}`;
-                    showSuccess('Nombre de usuario cambiado correctamente');
-                    document.getElementById('usernameError').textContent = '';
-                    document.getElementById('newUsername').value = '';
-                    window.location.reload(); // Recargar la página después de cambiar el nombre de usuario
-                } else if (response.status === 400) {
-                    response.text().then(text => {
-                        showError(text);
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text);
                     });
-                } else {
-                    showError('Error al cambiar el nombre de usuario');
                 }
+                return response.text();
+            })
+            .then(result => {
+                localStorage.setItem('username', newUsername);
+                showSuccess('Nombre de usuario cambiado correctamente');
+                document.getElementById('usernameError').textContent = '';
+                document.getElementById('newUsername').value = '';
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             })
             .catch(error => {
                 console.error('Error:', error);
-                showError('Error al cambiar el nombre de usuario');
+                showError(error.message || 'Error al cambiar el nombre de usuario');
             });
         });
 

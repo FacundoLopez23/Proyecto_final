@@ -174,15 +174,43 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateTimelineChart(transactions) {
         const ctx = document.getElementById('timelineChart').getContext('2d');
         
-        // Agrupar transacciones por fecha
-        const timelineData = transactions.reduce((acc, t) => {
+        // Ordenar transacciones por fecha
+        transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Agrupar transacciones por fecha y calcular el balance neto diario
+        const timelineData = {};
+        let runningBalance = 0;
+
+        transactions.forEach(t => {
             const date = t.date.split('T')[0];
-            if (!acc[date]) {
-                acc[date] = 0;
+            if (!timelineData[date]) {
+                timelineData[date] = {
+                    ingresos: 0,
+                    gastos: 0,
+                    count: 0,
+                    balanceNeto: 0
+                };
             }
-            acc[date] += t.amount;
-            return acc;
-        }, {});
+            
+            const amount = Number(t.amount);
+            
+            // Comparación en minúsculas
+            if (t.type.toLowerCase() === 'ingreso') {
+                timelineData[date].ingresos += amount;
+                runningBalance += amount;
+            } else if (t.type.toLowerCase() === 'gasto') {
+                timelineData[date].gastos += amount;
+                runningBalance -= amount;
+            }
+            
+            timelineData[date].count++;
+            timelineData[date].balanceNeto = runningBalance;
+
+            console.log(`Fecha: ${date}, Balance: ${runningBalance}`); // Debug
+        });
+
+        const dates = Object.keys(timelineData);
+        const balances = dates.map(date => timelineData[date].balanceNeto);
 
         if (charts.timelineChart) {
             charts.timelineChart.destroy();
@@ -191,57 +219,144 @@ document.addEventListener('DOMContentLoaded', function() {
         charts.timelineChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: Object.keys(timelineData),
+                labels: dates,
                 datasets: [{
-                    label: 'Evolución Temporal',
-                    data: Object.values(timelineData),
+                    label: 'Balance Neto Diario',
+                    data: balances,
                     borderColor: '#007bff',
-                    fill: false
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    fill: true,
+                    tension: 0.4
                 }]
             },
-            options: getChartOptions(document.body.classList.contains('dark-mode'))
+            options: {
+                ...getChartOptions(document.body.classList.contains('dark-mode')),
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return new Intl.NumberFormat('es-AR', {
+                                    style: 'currency',
+                                    currency: 'ARS'
+                                }).format(value);
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const date = context.label;
+                                const data = timelineData[date];
+                                return [
+                                    `Balance Neto: ${new Intl.NumberFormat('es-AR', {
+                                        style: 'currency',
+                                        currency: 'ARS'
+                                    }).format(data.balanceNeto)}`,
+                                    `Ingresos del día: ${new Intl.NumberFormat('es-AR', {
+                                        style: 'currency',
+                                        currency: 'ARS'
+                                    }).format(data.ingresos)}`,
+                                    `Gastos del día: ${new Intl.NumberFormat('es-AR', {
+                                        style: 'currency',
+                                        currency: 'ARS'
+                                    }).format(data.gastos)}`,
+                                    `Transacciones: ${data.count}`
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
         });
     }
 
     function updateBalanceChart(transactions) {
         const ctx = document.getElementById('balanceChart').getContext('2d');
         
-        // Calcular ingresos y gastos totales
-        const totals = transactions.reduce((acc, t) => {
-            if (t.type === 'Ingreso') {
-                acc.ingresos += t.amount;
-            } else {
-                acc.gastos += t.amount;
-            }
+        // Ordenar transacciones por fecha
+        transactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Calcular balance acumulado por día, invirtiendo la lógica de gastos e ingresos
+        let balance = 0;
+        const dailyBalances = transactions.reduce((acc, t) => {
+            const date = t.date.split('T')[0];
+            // Invertimos la lógica: los gastos suman y los ingresos restan
+            balance += t.type === 'Gasto' ? -t.amount : t.amount;
+            acc[date] = balance;
             return acc;
-        }, { ingresos: 0, gastos: 0 });
+        }, {});
 
         if (charts.balanceChart) {
             charts.balanceChart.destroy();
         }
 
         charts.balanceChart = new Chart(ctx, {
-            type: 'bar',
+            type: 'line',
             data: {
-                labels: ['Ingresos', 'Gastos'],
+                labels: Object.keys(dailyBalances),
                 datasets: [{
-                    label: 'Balance',
-                    data: [totals.ingresos, totals.gastos],
-                    backgroundColor: ['#28a745', '#dc3545']
+                    label: 'Balance Diario',
+                    data: Object.values(dailyBalances),
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    fill: true,
+                    tension: 0.4
                 }]
             },
-            options: getChartOptions(document.body.classList.contains('dark-mode'))
+            options: {
+                ...getChartOptions(document.body.classList.contains('dark-mode')),
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return new Intl.NumberFormat('es-AR', {
+                                    style: 'currency',
+                                    currency: 'ARS'
+                                }).format(value);
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return new Intl.NumberFormat('es-AR', {
+                                    style: 'currency',
+                                    currency: 'ARS'
+                                }).format(context.parsed.y);
+                            }
+                        }
+                    }
+                }
+            }
         });
     }
 
     function updateTypeChart(transactions, chartType) {
         const ctx = document.getElementById('typeChart').getContext('2d');
         
-        // Agrupar transacciones por tipo
+        // Agrupar transacciones por tipo, ahora los ingresos son positivos y los gastos positivos también
         const typeData = transactions.reduce((acc, t) => {
             if (!acc[t.type]) {
                 acc[t.type] = 0;
             }
+            // Sumamos todos los valores como positivos
             acc[t.type] += t.amount;
             return acc;
         }, {});
@@ -257,10 +372,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Distribución por Tipo',
                     data: Object.values(typeData),
-                    backgroundColor: ['#28a745', '#dc3545']
+                    backgroundColor: ['#28a745', '#dc3545'], // Verde para ingresos, rojo para gastos
                 }]
             },
-            options: getChartOptions(document.body.classList.contains('dark-mode'))
+            options: {
+                ...getChartOptions(document.body.classList.contains('dark-mode')),
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: function(value) {
+                                return new Intl.NumberFormat('es-AR', {
+                                    style: 'currency',
+                                    currency: 'ARS'
+                                }).format(value);
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return new Intl.NumberFormat('es-AR', {
+                                    style: 'currency',
+                                    currency: 'ARS'
+                                }).format(context.parsed.y);
+                            }
+                        }
+                    }
+                }
+            }
         });
     }
 

@@ -42,12 +42,15 @@ public class UserService {
     public Optional<User> changeUsername(String username, String newUsername) {
         Optional<User> user = findByUsername(username);
         if (user.isPresent()) {
+            // Verificar si el nuevo username ya existe
+            if (findByUsername(newUsername).isPresent()) {
+                return Optional.empty();
+            }
             User existingUser = user.get();
             existingUser.setUsername(newUsername);
             return Optional.of(save(existingUser));
-        } else {
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     // Método para desactivar la cuenta
